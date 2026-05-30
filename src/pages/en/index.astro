@@ -1,5 +1,10 @@
 ---
-// src/pages/en/index.astro
+/**
+ * src/pages/en/index.astro — Home page (English)
+ *
+ * Mirror of src/pages/es/index.astro in English.
+ * Keep both files in sync structurally; only text and hrefs differ.
+ */
 import Base from '../../layouts/Base.astro';
 import Newsletter from '../../components/Newsletter.astro';
 ---
@@ -10,7 +15,7 @@ import Newsletter from '../../components/Newsletter.astro';
   description="latama11y — Specialized digital accessibility consulting for teams and products in Latin America."
 >
 
-  <!-- HERO -->
+  <!-- ===== HERO ===== -->
   <section class="hero" aria-labelledby="hero-heading">
     <div class="container">
       <p class="hero-eyebrow" aria-hidden="true">// digital accessibility</p>
@@ -19,37 +24,46 @@ import Newsletter from '../../components/Newsletter.astro';
         <span class="accent-gradient">that works for everyone.</span>
       </h1>
       <p class="hero-sub">
-        Specialized digital accessibility consulting for product and development teams in Latin America.
-        Audits, implementation, and technical guidance.
+        Specialized digital accessibility consulting for product and development
+        teams in Latin America. Audits, implementation, and technical guidance.
       </p>
       <div class="hero-actions">
         <a href="/en/services/" class="btn btn-primary">View services</a>
-        <a href="/en/blog/" class="btn btn-ghost">Read research</a>
+        <a href="/en/blog/"     class="btn btn-ghost">Read research</a>
       </div>
     </div>
   </section>
 
   <div class="section-divider" aria-hidden="true"></div>
 
-  <!-- SERVICES PREVIEW -->
+  <!-- ===== SERVICES (preview) ===== -->
   <section class="services-preview" aria-labelledby="services-heading">
     <div class="container">
       <h2 id="services-heading" class="section-label">Services</h2>
       <ul class="services-grid" role="list">
         <li class="service-card">
-          <p class="service-tag">01</p>
+          <p class="service-tag" aria-hidden="true">01</p>
           <h3>Accessibility audit</h3>
-          <p class="muted">Technical evaluation of websites and applications against WCAG 2.1 / 2.2. Detailed report with criteria, impact, and prioritized recommendations.</p>
+          <p class="muted">
+            Technical evaluation of websites and applications against WCAG 2.1 / 2.2.
+            Detailed report with criteria, impact, and prioritized recommendations.
+          </p>
         </li>
         <li class="service-card">
-          <p class="service-tag">02</p>
+          <p class="service-tag" aria-hidden="true">02</p>
           <h3>Technical consulting</h3>
-          <p class="muted">Support for development teams to integrate accessibility into the design and product building process.</p>
+          <p class="muted">
+            Support for development teams to integrate accessibility into the
+            design and product building process.
+          </p>
         </li>
         <li class="service-card">
-          <p class="service-tag">03</p>
+          <p class="service-tag" aria-hidden="true">03</p>
           <h3>Component review</h3>
-          <p class="muted">Analysis of design systems, component libraries, and critical flows to ensure accessibility from the ground up.</p>
+          <p class="muted">
+            Analysis of design systems, component libraries, and critical flows
+            to ensure accessibility from the ground up.
+          </p>
         </li>
       </ul>
       <a href="/en/services/" class="link-more">View all services →</a>
@@ -58,7 +72,7 @@ import Newsletter from '../../components/Newsletter.astro';
 
   <div class="section-divider" aria-hidden="true"></div>
 
-  <!-- RESEARCH / BLOG PREVIEW -->
+  <!-- ===== RESEARCH / BLOG (preview) ===== -->
   <section class="blog-preview" aria-labelledby="blog-heading">
     <div class="container">
       <div class="blog-header">
@@ -66,21 +80,27 @@ import Newsletter from '../../components/Newsletter.astro';
         <a href="/en/blog/" class="link-more">View all →</a>
       </div>
       <p class="muted blog-sub">
-        We analyze the accessibility of digital products across Latin America: government, banking, retail, transport.
-        Country by country. No filters.
+        We analyze the accessibility of digital products across Latin America:
+        government, banking, retail, transport. Country by country. No filters.
       </p>
+      <!--
+        TODO: replace with dynamic listing using getCollection('blog')
+        once entries exist in src/content/blog/
+      -->
       <div class="blog-placeholder" role="note">
         <p class="muted">First research pieces coming soon.</p>
       </div>
     </div>
   </section>
 
-  <!-- NEWSLETTER -->
+  <!-- ===== NEWSLETTER ===== -->
   <Newsletter lang="en" />
 
 </Base>
 
 <style>
+  /* Identical structure to es/index.astro — keep in sync */
+
   .hero { padding: var(--space-2xl) 0 var(--space-xl); }
 
   .hero-eyebrow {
@@ -119,7 +139,7 @@ import Newsletter from '../../components/Newsletter.astro';
     font-family: var(--font-mono);
     font-size: 0.875rem;
     padding: 0.75rem 1.5rem;
-    border-radius: 2px;
+    border-radius: var(--border-radius);
     text-decoration: none;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
     display: inline-block;
@@ -161,13 +181,16 @@ import Newsletter from '../../components/Newsletter.astro';
   .service-card:hover { background: var(--color-surface); }
   .service-tag { font-size: 0.75rem; color: var(--color-purple-lt); font-family: var(--font-mono); margin-bottom: var(--space-md); }
   .service-card h3 { font-size: 1.0625rem; margin-bottom: var(--space-sm); }
-  .service-card p { font-size: 0.875rem; line-height: 1.7; }
-  .link-more { font-size: 0.875rem; color: var(--color-purple-lt); }
+  .service-card p  { font-size: 0.875rem; line-height: 1.7; }
+
+  .link-more       { font-size: 0.875rem; color: var(--color-purple-lt); }
   .link-more:hover { color: var(--color-pink-lt); }
 
   .blog-preview { padding: var(--space-lg) 0; }
+
   .blog-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-sm); }
-  .blog-sub { max-width: 58ch; font-size: 0.9375rem; margin-bottom: var(--space-lg); }
-  .blog-placeholder { border: 1px dashed var(--color-border); padding: var(--space-lg); border-radius: 2px; }
+  .blog-sub    { max-width: 58ch; font-size: 0.9375rem; margin-bottom: var(--space-lg); }
+
+  .blog-placeholder { border: 1px dashed var(--color-border); padding: var(--space-lg); border-radius: var(--border-radius); }
   .blog-placeholder p { font-size: 0.875rem; }
 </style>

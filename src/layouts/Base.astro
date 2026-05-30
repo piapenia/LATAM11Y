@@ -1,5 +1,20 @@
 ---
-// src/layouts/Base.astro
+/**
+ * Base.astro — Layout raíz del sitio
+ *
+ * Responsabilidades:
+ *  - Estructura HTML semántica (<html> con lang, <head>, <body>)
+ *  - Skip link para navegación por teclado (WCAG 2.4.1)
+ *  - Header con navegación principal y cambio de idioma
+ *  - Slot para el contenido de cada página
+ *  - Footer con navegación secundaria y declaración de accesibilidad
+ *
+ * Props:
+ *  - lang        → 'es' | 'en'  — idioma de la página
+ *  - title       → string       — título de la página (sin el sufijo "— latama11y")
+ *  - description → string       — descripción para <meta name="description">
+ */
+
 interface Props {
   title: string;
   description: string;
@@ -7,8 +22,38 @@ interface Props {
 }
 
 const { title, description, lang } = Astro.props;
+
 const altLang = lang === 'es' ? 'en' : 'es';
 const altPath = lang === 'es' ? '/en/' : '/es/';
+
+const nav = {
+  es: {
+    services:  { href: '/es/servicios/',       label: 'Servicios'        },
+    blog:      { href: '/es/blog/',            label: 'Blog'             },
+    about:     { href: '/es/sobre-nosotras/',  label: 'Sobre nosotras'   },
+    contact:   { href: '/es/contacto/',        label: 'Contacto'         },
+    a11yStmt:  { href: '/es/accesibilidad/',   label: 'Declaración de accesibilidad' },
+    langBtn:   { label: 'Switch to English' },
+    openMenu:  'Abrir menú',
+    mainNav:   'Navegación principal',
+    footerNav: 'Navegación del pie de página',
+    tagline:   'Consultoría de accesibilidad digital para Latinoamérica',
+  },
+  en: {
+    services:  { href: '/en/services/',   label: 'Services'            },
+    blog:      { href: '/en/blog/',       label: 'Blog'                },
+    about:     { href: '/en/about/',      label: 'About'               },
+    contact:   { href: '/en/contact/',    label: 'Contact'             },
+    a11yStmt:  { href: '/en/accessibility/', label: 'Accessibility statement' },
+    langBtn:   { label: 'Cambiar a español' },
+    openMenu:  'Open menu',
+    mainNav:   'Main navigation',
+    footerNav: 'Footer navigation',
+    tagline:   'Digital accessibility consulting for Latin America',
+  },
+};
+
+const t = nav[lang];
 ---
 <!DOCTYPE html>
 <html lang={lang}>
@@ -16,122 +61,156 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
+
+  <!-- Hreflang: indica versiones alternativas del idioma (SEO + accesibilidad) -->
+  <link rel="alternate" hreflang={lang}    href={Astro.url.pathname} />
   <link rel="alternate" hreflang={altLang} href={altPath} />
-  <link rel="alternate" hreflang={lang} href={Astro.url.pathname} />
+
   <title>{title} — latama11y</title>
+
+  <!-- Preconnect optimiza la carga de fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;700;800&display=swap"
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="/styles/global.css" />
 </head>
 <body>
+
+  <!-- Skip link: primer elemento interactivo, saltea la nav hacia el contenido (WCAG 2.4.1) -->
   <a href="#main-content" class="skip-link">
     {lang === 'es' ? 'Saltar al contenido principal' : 'Skip to main content'}
   </a>
 
+  <!-- ===== HEADER ===== -->
   <header class="site-header" role="banner">
     <div class="container header-inner">
+
       <a href={lang === 'es' ? '/es/' : '/en/'} class="header-logo" aria-label="latama11y — inicio">
         <span class="logo-prefix">lata</span><span class="logo-m">m</span><span class="logo-suffix">a11y</span>
       </a>
 
-      <nav class="main-nav" aria-label={lang === 'es' ? 'Navegación principal' : 'Main navigation'}>
+      <nav class="main-nav" id="main-nav" aria-label={t.mainNav}>
         <ul role="list">
-          <li><a href={lang === 'es' ? '/es/servicios/' : '/en/services/'}>
-            {lang === 'es' ? 'Servicios' : 'Services'}
-          </a></li>
-          <li><a href={lang === 'es' ? '/es/blog/' : '/en/blog/'}>Blog</a></li>
-          <li><a href={lang === 'es' ? '/es/sobre-nosotras/' : '/en/about/'}>
-            {lang === 'es' ? 'Sobre nosotras' : 'About'}
-          </a></li>
-          <li><a href={lang === 'es' ? '/es/contacto/' : '/en/contact/'}>
-            {lang === 'es' ? 'Contacto' : 'Contact'}
-          </a></li>
+          <li><a href={t.services.href}>{t.services.label}</a></li>
+          <li><a href={t.blog.href}>{t.blog.label}</a></li>
+          <li><a href={t.about.href}>{t.about.label}</a></li>
+          <li><a href={t.contact.href}>{t.contact.label}</a></li>
           <li class="lang-switch">
-            <a href={altPath} onclick={`localStorage.setItem('latama11y-lang', '${altLang}')`} aria-label={lang === 'es' ? 'Switch to English' : 'Cambiar a español'}>
+            <a
+              href={altPath}
+              aria-label={t.langBtn.label}
+              onclick={`localStorage.setItem('latama11y-lang', '${altLang}')`}
+            >
               {lang === 'es' ? 'EN' : 'ES'}
             </a>
           </li>
         </ul>
       </nav>
 
-      <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label={lang === 'es' ? 'Abrir menú' : 'Open menu'}>
+      <!-- Botón hamburguesa: visible sólo en mobile -->
+      <button
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="main-nav"
+        aria-label={t.openMenu}
+      >
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </button>
+
     </div>
   </header>
 
+  <!-- ===== CONTENIDO PRINCIPAL ===== -->
+  <!-- tabindex="-1" permite que el skip link mueva el foco aquí programáticamente -->
   <main id="main-content" tabindex="-1">
     <slot />
   </main>
 
+  <!-- ===== FOOTER ===== -->
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-inner">
+
       <div class="footer-brand">
         <p class="footer-logo" aria-label="latama11y">
           <span class="logo-prefix">lata</span><span class="logo-m">m</span><span class="logo-suffix">a11y</span>
         </p>
-        <p class="footer-tagline">
-          {lang === 'es'
-            ? 'Consultoría de accesibilidad digital para Latinoamérica'
-            : 'Digital accessibility consulting for Latin America'}
-        </p>
+        <p class="footer-tagline">{t.tagline}</p>
       </div>
 
-      <nav class="footer-nav" aria-label={lang === 'es' ? 'Navegación del pie de página' : 'Footer navigation'}>
+      <nav class="footer-nav" aria-label={t.footerNav}>
         <ul role="list">
-          <li><a href={lang === 'es' ? '/es/servicios/' : '/en/services/'}>
-            {lang === 'es' ? 'Servicios' : 'Services'}
-          </a></li>
-          <li><a href={lang === 'es' ? '/es/blog/' : '/en/blog/'}>Blog</a></li>
-          <li><a href={lang === 'es' ? '/es/sobre-nosotras/' : '/en/about/'}>
-            {lang === 'es' ? 'Sobre nosotras' : 'About'}
-          </a></li>
+          <li><a href={t.services.href}>{t.services.label}</a></li>
+          <li><a href={t.blog.href}>{t.blog.label}</a></li>
+          <li><a href={t.about.href}>{t.about.label}</a></li>
         </ul>
         <ul role="list">
-          <li><a href={lang === 'es' ? '/es/contacto/' : '/en/contact/'}>
-            {lang === 'es' ? 'Contacto' : 'Contact'}
-          </a></li>
+          <li><a href={t.contact.href}>{t.contact.label}</a></li>
           <li><a href="mailto:contacto@latama11y.com">contacto@latama11y.com</a></li>
-          <li><a href="https://linkedin.com/company/latama11y" rel="noopener noreferrer" target="_blank">LinkedIn</a></li>
+          <li>
+            <a href="https://linkedin.com/company/latama11y" rel="noopener noreferrer" target="_blank">
+              LinkedIn
+            </a>
+          </li>
         </ul>
       </nav>
 
       <div class="footer-bottom">
         <p class="muted">
           © {new Date().getFullYear()} latama11y —
-          <a href={lang === 'es' ? '/es/accesibilidad/' : '/en/accessibility/'}>
-            {lang === 'es' ? 'Declaración de accesibilidad' : 'Accessibility statement'}
-          </a>
+          <a href={t.a11yStmt.href}>{t.a11yStmt.label}</a>
         </p>
-        <a href={altPath} class="lang-switch-footer" onclick={`localStorage.setItem('latama11y-lang', '${altLang}')`}>
+        <a
+          href={altPath}
+          class="lang-switch-footer"
+          onclick={`localStorage.setItem('latama11y-lang', '${altLang}')`}
+        >
           {lang === 'es' ? 'View in English' : 'Ver en español'}
         </a>
       </div>
+
     </div>
   </footer>
 
+  <!-- ===== SCRIPTS ===== -->
   <script>
     // Mobile nav toggle
     const toggle = document.querySelector('.nav-toggle') as HTMLButtonElement;
-    const nav = document.querySelector('.main-nav') as HTMLElement;
+    const nav    = document.querySelector('.main-nav')  as HTMLElement;
+
     toggle?.addEventListener('click', () => {
-      const expanded = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', String(!expanded));
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isExpanded));
       nav.classList.toggle('is-open');
     });
+
+    // Cierra el menú al pulsar Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+        nav.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.focus();
+      }
+    });
   </script>
+
 </body>
 </html>
 
 <style>
+  /* ============================================================
+     HEADER
+     ============================================================ */
   .site-header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(10,10,10,0.92);
+    background: rgba(10, 10, 10, 0.92);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--color-border);
   }
@@ -144,7 +223,9 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
     gap: var(--space-lg);
   }
 
-  .header-logo, .footer-logo {
+  /* Logo */
+  .header-logo,
+  .footer-logo {
     font-family: var(--font-display);
     font-size: 1.25rem;
     font-weight: 800;
@@ -155,7 +236,9 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
 
   .header-logo:hover { text-decoration: none; color: var(--color-text); }
 
-  .logo-prefix, .logo-suffix { color: var(--color-text); }
+  .logo-prefix,
+  .logo-suffix { color: var(--color-text); }
+
   .logo-m {
     background: linear-gradient(135deg, var(--color-purple-lt), var(--color-pink));
     -webkit-background-clip: text;
@@ -163,6 +246,7 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
     background-clip: text;
   }
 
+  /* Nav principal */
   .main-nav ul {
     display: flex;
     align-items: center;
@@ -182,12 +266,13 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
     color: var(--color-text);
   }
 
+  /* Botón de cambio de idioma */
   .lang-switch a {
     font-size: 0.75rem;
     letter-spacing: 0.08em;
     border: 1px solid var(--color-border);
     padding: 0.2rem 0.5rem;
-    border-radius: 2px;
+    border-radius: var(--border-radius);
     color: var(--color-muted);
     transition: border-color 0.15s, color 0.15s;
   }
@@ -198,6 +283,7 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
     text-decoration: none;
   }
 
+  /* Botón hamburguesa */
   .nav-toggle {
     display: none;
     flex-direction: column;
@@ -216,7 +302,9 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
     transition: transform 0.2s, opacity 0.2s;
   }
 
-  /* Footer */
+  /* ============================================================
+     FOOTER
+     ============================================================ */
   .site-footer {
     border-top: 1px solid var(--color-border);
     padding: var(--space-xl) 0 var(--space-lg);
@@ -237,9 +325,7 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
     margin-top: var(--space-xs);
   }
 
-  .footer-nav {
-    display: contents;
-  }
+  .footer-nav { display: contents; }
 
   .footer-nav ul {
     list-style: none;
@@ -271,7 +357,9 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
     color: var(--color-muted);
   }
 
-  /* Mobile */
+  /* ============================================================
+     RESPONSIVE — Mobile
+     ============================================================ */
   @media (max-width: 768px) {
     .nav-toggle { display: flex; }
 
@@ -294,7 +382,7 @@ const altPath = lang === 'es' ? '/en/' : '/es/';
       gap: var(--space-md);
     }
 
-    .footer-inner { grid-template-columns: 1fr; }
-    .footer-bottom { flex-direction: column; gap: var(--space-sm); align-items: flex-start; }
+    .footer-inner            { grid-template-columns: 1fr; }
+    .footer-bottom           { flex-direction: column; gap: var(--space-sm); align-items: flex-start; }
   }
 </style>

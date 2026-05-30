@@ -1,31 +1,44 @@
 ---
-// src/components/Newsletter.astro
+/**
+ * Newsletter.astro — Formulario de suscripción
+ *
+ * Características de accesibilidad:
+ *  - Label visible para lectores de pantalla via .sr-only (WCAG 1.3.1)
+ *  - aria-required en el input (WCAG 4.1.2)
+ *  - aria-describedby vincula la nota de privacidad al input (WCAG 1.3.1)
+ *  - role="status" + aria-live="polite" anuncia el resultado sin interrumpir (WCAG 4.1.3)
+ *  - Botón deshabilitado durante el envío para evitar doble submit
+ *
+ * TODO: Reemplazar la URL de Brevo con el endpoint real una vez configurada la cuenta.
+ */
+
 interface Props {
   lang: 'es' | 'en';
 }
+
 const { lang } = Astro.props;
 
 const t = {
   es: {
-    heading: 'Investigación directa en tu correo',
-    sub: 'Informes, análisis y novedades de accesibilidad en LATAM. Sin ruido.',
-    label: 'Suscríbete a nuestro newsletter',
+    heading:     'Investigación directa en tu correo',
+    sub:         'Informes, análisis y novedades de accesibilidad en LATAM. Sin ruido.',
+    label:       'Correo electrónico',
     placeholder: 'tu@correo.com',
-    btn: 'Suscribirme',
-    ok: '¡Listo! Te avisamos cuando haya novedades.',
-    err: 'Algo salió mal. Intentá de nuevo.',
-    privacy: 'Sin spam. Podés darte de baja cuando quieras.',
+    btn:         'Suscribirme',
+    ok:          '¡Listo! Te avisamos cuando haya novedades.',
+    err:         'Algo salió mal. Intentá de nuevo.',
+    privacy:     'Sin spam. Podés darte de baja cuando quieras.',
   },
   en: {
-    heading: 'Research straight to your inbox',
-    sub: 'Accessibility reports, analysis, and updates from LATAM. No noise.',
-    label: 'Subscribe to our newsletter',
+    heading:     'Research straight to your inbox',
+    sub:         'Accessibility reports, analysis, and updates from LATAM. No noise.',
+    label:       'Email address',
     placeholder: 'you@email.com',
-    btn: 'Subscribe',
-    ok: 'Done! We\'ll reach out when there\'s something worth reading.',
-    err: 'Something went wrong. Please try again.',
-    privacy: 'No spam. Unsubscribe anytime.',
-  }
+    btn:         'Subscribe',
+    ok:          "Done! We'll reach out when there's something worth reading.",
+    err:         'Something went wrong. Please try again.',
+    privacy:     'No spam. Unsubscribe anytime.',
+  },
 };
 
 const copy = t[lang];
@@ -33,17 +46,18 @@ const copy = t[lang];
 
 <section class="newsletter-section" aria-labelledby="newsletter-heading">
   <div class="container newsletter-inner">
+
     <div class="newsletter-text">
       <h2 id="newsletter-heading">{copy.heading}</h2>
       <p class="muted">{copy.sub}</p>
     </div>
 
-    <form
-      class="newsletter-form"
-      id="newsletter-form"
-      novalidate
-    >
+    <form class="newsletter-form" id="newsletter-form" novalidate>
       <div class="form-row">
+        <!--
+          Label asociado por `for` + `id`.
+          .sr-only lo oculta visualmente sin quitarlo del árbol de accesibilidad.
+        -->
         <label for="newsletter-email" class="sr-only">{copy.label}</label>
         <input
           type="email"
@@ -57,9 +71,14 @@ const copy = t[lang];
         />
         <button type="submit">{copy.btn}</button>
       </div>
+
+      <!-- Nota de privacidad vinculada al input via aria-describedby -->
       <p id="newsletter-privacy" class="privacy-note muted">{copy.privacy}</p>
+
+      <!-- Región de estado: aria-live="polite" anuncia cambios sin interrumpir -->
       <p class="form-msg" id="newsletter-msg" role="status" aria-live="polite"></p>
     </form>
+
   </div>
 </section>
 
@@ -69,30 +88,34 @@ const copy = t[lang];
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = form.querySelector('input[type="email"]').value;
+
+    const input = form.querySelector('input[type="email"]');
+    const email = input?.value?.trim();
     if (!email) return;
 
     const btn = form.querySelector('button[type="submit"]');
     btn.disabled = true;
+    msg.textContent = '';
 
     try {
-      // Reemplazar la URL con el endpoint real de Brevo cuando esté configurado
+      // TODO: reemplazar con el endpoint real de Brevo cuando esté configurado
       const res = await fetch('https://api.brevo.com/v3/contacts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, listIds: [1] })
+        body: JSON.stringify({ email, listIds: [1] }),
       });
 
       if (res.ok || res.status === 204) {
         msg.textContent = okMsg;
-        msg.style.color = '#a78bfa';
+        msg.style.color = 'var(--color-purple-lt)';
         form.reset();
       } else {
-        throw new Error();
+        throw new Error(`HTTP ${res.status}`);
       }
-    } catch {
+    } catch (err) {
+      console.error('[Newsletter] Error al suscribir:', err);
       msg.textContent = errMsg;
-      msg.style.color = '#fca5a5';
+      msg.style.color = 'var(--color-red-lt)';
       btn.disabled = false;
     }
   });
@@ -130,15 +153,15 @@ const copy = t[lang];
 
   input[type="email"] {
     flex: 1;
+    min-width: 0; /* evita overflow en flex */
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: 2px;
+    border-radius: var(--border-radius);
     color: var(--color-text);
     font-family: var(--font-mono);
     font-size: 0.875rem;
     padding: 0.65rem 0.875rem;
     transition: border-color 0.15s;
-    min-width: 0;
   }
 
   input[type="email"]:focus-visible {
@@ -152,7 +175,7 @@ const copy = t[lang];
   button[type="submit"] {
     background: var(--color-purple);
     border: 1px solid var(--color-purple);
-    border-radius: 2px;
+    border-radius: var(--border-radius);
     color: #fff;
     font-family: var(--font-mono);
     font-size: 0.875rem;
@@ -160,35 +183,19 @@ const copy = t[lang];
     padding: 0.65rem 1.25rem;
     cursor: pointer;
     white-space: nowrap;
-    transition: background 0.15s;
+    transition: background 0.15s, border-color 0.15s;
   }
 
-  button[type="submit"]:hover { background: #6d28d9; border-color: #6d28d9; }
-  button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
-  button[type="submit"]:focus-visible {
-    outline: 2px solid var(--color-pink);
-    outline-offset: 3px;
-  }
+  button[type="submit"]:hover          { background: #6d28d9; border-color: #6d28d9; }
+  button[type="submit"]:disabled       { opacity: 0.5; cursor: not-allowed; }
+  button[type="submit"]:focus-visible  { outline: 2px solid var(--color-pink); outline-offset: 3px; }
 
   .privacy-note { font-size: 0.75rem; }
-  .form-msg { font-size: 0.875rem; min-height: 1.2rem; }
-
-  /* Clase utilitaria para ocultar visualmente pero mantener para lectores de pantalla */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0,0,0,0);
-    white-space: nowrap;
-    border: 0;
-  }
+  .form-msg     { font-size: 0.875rem; min-height: 1.2rem; }
 
   @media (max-width: 768px) {
-    .newsletter-inner { grid-template-columns: 1fr; }
-    .form-row { flex-direction: column; }
-    button[type="submit"] { width: 100%; }
+    .newsletter-inner      { grid-template-columns: 1fr; }
+    .form-row              { flex-direction: column; }
+    button[type="submit"]  { width: 100%; }
   }
 </style>

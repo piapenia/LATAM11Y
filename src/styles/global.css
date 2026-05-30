@@ -1,11 +1,29 @@
+/*
+ * global.css — Fuente única de tokens de diseño y estilos base
+ *
+ * Orden:
+ *   1. @import de fuentes
+ *   2. Custom properties (:root)
+ *   3. Reset y base
+ *   4. Tipografía base
+ *   5. Componentes utilitarios globales (container, sr-only, skip-link, .accent, .muted)
+ */
+
+/* ============================================================
+   1. FUENTES
+   ============================================================ */
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;700;800&display=swap');
 
+/* ============================================================
+   2. CUSTOM PROPERTIES (Design Tokens)
+   ============================================================ */
 :root {
-  /* Paleta */
-  --color-bg:        #0a0a0a;
-  --color-surface:   #111111;
-  --color-border:    #1e1e1e;
+  /* --- Colores de superficie --- */
+  --color-bg:       #0a0a0a;
+  --color-surface:  #111111;
+  --color-border:   #1e1e1e;
 
+  /* --- Paleta de marca --- */
   --color-purple:    #7c3aed;
   --color-purple-lt: #a78bfa;
   --color-pink:      #ec4899;
@@ -13,27 +31,31 @@
   --color-red:       #dc2626;
   --color-red-lt:    #fca5a5;
 
-  --color-text:      #f4f4f5;
-  --color-muted:     #71717a;
-  --color-accent:    var(--color-purple-lt);
+  /* --- Texto --- */
+  --color-text:   #f4f4f5;
+  --color-muted:  #71717a;
+  --color-accent: var(--color-purple-lt);
 
-  /* Tipografía */
+  /* --- Tipografía --- */
   --font-display: 'Syne', sans-serif;
   --font-mono:    'DM Mono', monospace;
 
-  /* Espaciado */
-  --space-xs:  0.25rem;
-  --space-sm:  0.5rem;
-  --space-md:  1rem;
-  --space-lg:  2rem;
-  --space-xl:  4rem;
-  --space-2xl: 8rem;
+  /* --- Espaciado (escala modular × 2) --- */
+  --space-xs:  0.25rem;   /*  4px */
+  --space-sm:  0.5rem;    /*  8px */
+  --space-md:  1rem;      /* 16px */
+  --space-lg:  2rem;      /* 32px */
+  --space-xl:  4rem;      /* 64px */
+  --space-2xl: 8rem;      /* 128px */
 
-  /* Layout */
-  --max-width: 1100px;
+  /* --- Layout --- */
+  --max-width:     1100px;
   --border-radius: 2px;
 }
 
+/* ============================================================
+   3. RESET Y BASE
+   ============================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -45,6 +67,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Respeta la preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -54,6 +85,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+img, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ============================================================
+   4. TIPOGRAFÍA BASE
+   ============================================================ */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 700;
@@ -73,18 +112,11 @@ a:focus-visible {
   text-decoration: underline;
 }
 
-/* Focus visible global — nunca ocultar el foco */
-:focus-visible {
-  outline: 2px solid var(--color-pink);
-  outline-offset: 3px;
-  border-radius: var(--border-radius);
-}
+/* ============================================================
+   5. COMPONENTES UTILITARIOS GLOBALES
+   ============================================================ */
 
-img, svg {
-  max-width: 100%;
-  height: auto;
-}
-
+/* — Contenedor de ancho máximo — */
 .container {
   width: 100%;
   max-width: var(--max-width);
@@ -92,11 +124,11 @@ img, svg {
   padding-inline: var(--space-lg);
 }
 
-/* Utilidad: texto en color acento */
+/* — Texto auxiliar de color — */
 .accent { color: var(--color-accent); }
 .muted  { color: var(--color-muted); }
 
-/* Skip link para navegación por teclado */
+/* — Skip link: acceso rápido al contenido principal (WCAG 2.4.1) — */
 .skip-link {
   position: absolute;
   top: -100%;
@@ -113,4 +145,24 @@ img, svg {
 
 .skip-link:focus {
   top: var(--space-md);
+}
+
+/* — Focus visible global: nunca ocultar el indicador de foco (WCAG 2.4.7) — */
+:focus-visible {
+  outline: 2px solid var(--color-pink);
+  outline-offset: 3px;
+  border-radius: var(--border-radius);
+}
+
+/* — Visualmente oculto pero legible por lectores de pantalla (WCAG 1.3.1) — */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
