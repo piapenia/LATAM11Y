@@ -1,0 +1,300 @@
+---
+// src/layouts/Base.astro
+interface Props {
+  title: string;
+  description: string;
+  lang: 'es' | 'en';
+}
+
+const { title, description, lang } = Astro.props;
+const altLang = lang === 'es' ? 'en' : 'es';
+const altPath = lang === 'es' ? '/en/' : '/es/';
+---
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <link rel="alternate" hreflang={altLang} href={altPath} />
+  <link rel="alternate" hreflang={lang} href={Astro.url.pathname} />
+  <title>{title} — latama11y</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/global.css" />
+</head>
+<body>
+  <a href="#main-content" class="skip-link">
+    {lang === 'es' ? 'Saltar al contenido principal' : 'Skip to main content'}
+  </a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href={lang === 'es' ? '/es/' : '/en/'} class="header-logo" aria-label="latama11y — inicio">
+        <span class="logo-prefix">lata</span><span class="logo-m">m</span><span class="logo-suffix">a11y</span>
+      </a>
+
+      <nav class="main-nav" aria-label={lang === 'es' ? 'Navegación principal' : 'Main navigation'}>
+        <ul role="list">
+          <li><a href={lang === 'es' ? '/es/servicios/' : '/en/services/'}>
+            {lang === 'es' ? 'Servicios' : 'Services'}
+          </a></li>
+          <li><a href={lang === 'es' ? '/es/blog/' : '/en/blog/'}>Blog</a></li>
+          <li><a href={lang === 'es' ? '/es/sobre-nosotras/' : '/en/about/'}>
+            {lang === 'es' ? 'Sobre nosotras' : 'About'}
+          </a></li>
+          <li><a href={lang === 'es' ? '/es/contacto/' : '/en/contact/'}>
+            {lang === 'es' ? 'Contacto' : 'Contact'}
+          </a></li>
+          <li class="lang-switch">
+            <a href={altPath} onclick={`localStorage.setItem('latama11y-lang', '${altLang}')`} aria-label={lang === 'es' ? 'Switch to English' : 'Cambiar a español'}>
+              {lang === 'es' ? 'EN' : 'ES'}
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <button class="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label={lang === 'es' ? 'Abrir menú' : 'Open menu'}>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    <slot />
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <p class="footer-logo" aria-label="latama11y">
+          <span class="logo-prefix">lata</span><span class="logo-m">m</span><span class="logo-suffix">a11y</span>
+        </p>
+        <p class="footer-tagline">
+          {lang === 'es'
+            ? 'Consultoría de accesibilidad digital para Latinoamérica'
+            : 'Digital accessibility consulting for Latin America'}
+        </p>
+      </div>
+
+      <nav class="footer-nav" aria-label={lang === 'es' ? 'Navegación del pie de página' : 'Footer navigation'}>
+        <ul role="list">
+          <li><a href={lang === 'es' ? '/es/servicios/' : '/en/services/'}>
+            {lang === 'es' ? 'Servicios' : 'Services'}
+          </a></li>
+          <li><a href={lang === 'es' ? '/es/blog/' : '/en/blog/'}>Blog</a></li>
+          <li><a href={lang === 'es' ? '/es/sobre-nosotras/' : '/en/about/'}>
+            {lang === 'es' ? 'Sobre nosotras' : 'About'}
+          </a></li>
+        </ul>
+        <ul role="list">
+          <li><a href={lang === 'es' ? '/es/contacto/' : '/en/contact/'}>
+            {lang === 'es' ? 'Contacto' : 'Contact'}
+          </a></li>
+          <li><a href="mailto:contacto@latama11y.com">contacto@latama11y.com</a></li>
+          <li><a href="https://linkedin.com/company/latama11y" rel="noopener noreferrer" target="_blank">LinkedIn</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer-bottom">
+        <p class="muted">
+          © {new Date().getFullYear()} latama11y —
+          <a href={lang === 'es' ? '/es/accesibilidad/' : '/en/accessibility/'}>
+            {lang === 'es' ? 'Declaración de accesibilidad' : 'Accessibility statement'}
+          </a>
+        </p>
+        <a href={altPath} class="lang-switch-footer" onclick={`localStorage.setItem('latama11y-lang', '${altLang}')`}>
+          {lang === 'es' ? 'View in English' : 'Ver en español'}
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    const toggle = document.querySelector('.nav-toggle') as HTMLButtonElement;
+    const nav = document.querySelector('.main-nav') as HTMLElement;
+    toggle?.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+      nav.classList.toggle('is-open');
+    });
+  </script>
+</body>
+</html>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: var(--space-lg);
+  }
+
+  .header-logo, .footer-logo {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+
+  .header-logo:hover { text-decoration: none; color: var(--color-text); }
+
+  .logo-prefix, .logo-suffix { color: var(--color-text); }
+  .logo-m {
+    background: linear-gradient(135deg, var(--color-purple-lt), var(--color-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .main-nav ul {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    list-style: none;
+  }
+
+  .main-nav a {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    transition: color 0.15s;
+    text-decoration: none;
+  }
+
+  .main-nav a:hover,
+  .main-nav a[aria-current="page"] {
+    color: var(--color-text);
+  }
+
+  .lang-switch a {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    border: 1px solid var(--color-border);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    color: var(--color-muted);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .lang-switch a:hover {
+    border-color: var(--color-purple-lt);
+    color: var(--color-purple-lt);
+    text-decoration: none;
+  }
+
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .nav-toggle span {
+    display: block;
+    width: 22px;
+    height: 1px;
+    background: var(--color-muted);
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  /* Footer */
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-xl) 0 var(--space-lg);
+    margin-top: var(--space-2xl);
+  }
+
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+
+  .footer-brand { grid-column: 1 / -1; }
+
+  .footer-tagline {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    margin-top: var(--space-xs);
+  }
+
+  .footer-nav {
+    display: contents;
+  }
+
+  .footer-nav ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .footer-nav a {
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    transition: color 0.15s;
+  }
+
+  .footer-nav a:hover { color: var(--color-text); text-decoration: none; }
+
+  .footer-bottom {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+    font-size: 0.8125rem;
+  }
+
+  .lang-switch-footer {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .nav-toggle { display: flex; }
+
+    .main-nav {
+      display: none;
+      position: absolute;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .main-nav.is-open { display: block; }
+
+    .main-nav ul {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-md);
+    }
+
+    .footer-inner { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: var(--space-sm); align-items: flex-start; }
+  }
+</style>

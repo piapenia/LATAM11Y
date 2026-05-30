@@ -1,0 +1,194 @@
+---
+// src/components/Newsletter.astro
+interface Props {
+  lang: 'es' | 'en';
+}
+const { lang } = Astro.props;
+
+const t = {
+  es: {
+    heading: 'Investigación directa en tu correo',
+    sub: 'Informes, análisis y novedades de accesibilidad en LATAM. Sin ruido.',
+    label: 'Suscríbete a nuestro newsletter',
+    placeholder: 'tu@correo.com',
+    btn: 'Suscribirme',
+    ok: '¡Listo! Te avisamos cuando haya novedades.',
+    err: 'Algo salió mal. Intentá de nuevo.',
+    privacy: 'Sin spam. Podés darte de baja cuando quieras.',
+  },
+  en: {
+    heading: 'Research straight to your inbox',
+    sub: 'Accessibility reports, analysis, and updates from LATAM. No noise.',
+    label: 'Subscribe to our newsletter',
+    placeholder: 'you@email.com',
+    btn: 'Subscribe',
+    ok: 'Done! We\'ll reach out when there\'s something worth reading.',
+    err: 'Something went wrong. Please try again.',
+    privacy: 'No spam. Unsubscribe anytime.',
+  }
+};
+
+const copy = t[lang];
+---
+
+<section class="newsletter-section" aria-labelledby="newsletter-heading">
+  <div class="container newsletter-inner">
+    <div class="newsletter-text">
+      <h2 id="newsletter-heading">{copy.heading}</h2>
+      <p class="muted">{copy.sub}</p>
+    </div>
+
+    <form
+      class="newsletter-form"
+      id="newsletter-form"
+      novalidate
+    >
+      <div class="form-row">
+        <label for="newsletter-email" class="sr-only">{copy.label}</label>
+        <input
+          type="email"
+          id="newsletter-email"
+          name="email"
+          placeholder={copy.placeholder}
+          autocomplete="email"
+          required
+          aria-required="true"
+          aria-describedby="newsletter-privacy"
+        />
+        <button type="submit">{copy.btn}</button>
+      </div>
+      <p id="newsletter-privacy" class="privacy-note muted">{copy.privacy}</p>
+      <p class="form-msg" id="newsletter-msg" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<script define:vars={{ okMsg: copy.ok, errMsg: copy.err }}>
+  const form = document.getElementById('newsletter-form');
+  const msg  = document.getElementById('newsletter-msg');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = form.querySelector('input[type="email"]').value;
+    if (!email) return;
+
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+
+    try {
+      // Reemplazar la URL con el endpoint real de Brevo cuando esté configurado
+      const res = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, listIds: [1] })
+      });
+
+      if (res.ok || res.status === 204) {
+        msg.textContent = okMsg;
+        msg.style.color = '#a78bfa';
+        form.reset();
+      } else {
+        throw new Error();
+      }
+    } catch {
+      msg.textContent = errMsg;
+      msg.style.color = '#fca5a5';
+      btn.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .newsletter-section {
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-xl) 0;
+  }
+
+  .newsletter-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  .newsletter-text h2 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    margin-bottom: var(--space-sm);
+  }
+
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .form-row {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  input[type="email"] {
+    flex: 1;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    padding: 0.65rem 0.875rem;
+    transition: border-color 0.15s;
+    min-width: 0;
+  }
+
+  input[type="email"]:focus-visible {
+    outline: none;
+    border-color: var(--color-purple-lt);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.25);
+  }
+
+  input[type="email"]::placeholder { color: var(--color-muted); }
+
+  button[type="submit"] {
+    background: var(--color-purple);
+    border: 1px solid var(--color-purple);
+    border-radius: 2px;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.65rem 1.25rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+
+  button[type="submit"]:hover { background: #6d28d9; border-color: #6d28d9; }
+  button[type="submit"]:disabled { opacity: 0.5; cursor: not-allowed; }
+  button[type="submit"]:focus-visible {
+    outline: 2px solid var(--color-pink);
+    outline-offset: 3px;
+  }
+
+  .privacy-note { font-size: 0.75rem; }
+  .form-msg { font-size: 0.875rem; min-height: 1.2rem; }
+
+  /* Clase utilitaria para ocultar visualmente pero mantener para lectores de pantalla */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 768px) {
+    .newsletter-inner { grid-template-columns: 1fr; }
+    .form-row { flex-direction: column; }
+    button[type="submit"] { width: 100%; }
+  }
+</style>

@@ -1,0 +1,254 @@
+---
+// src/pages/es/index.astro
+import Base from '../../layouts/Base.astro';
+import Newsletter from '../../components/Newsletter.astro';
+---
+
+<Base
+  lang="es"
+  title="Consultoría de accesibilidad digital"
+  description="latama11y — Consultoría especializada en accesibilidad digital para equipos y productos en Latinoamérica."
+>
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="container">
+      <p class="hero-eyebrow" aria-hidden="true">// accesibilidad digital</p>
+      <h1 id="hero-heading">
+        Construimos tecnología<br />
+        <span class="accent-gradient">que funciona para todos.</span>
+      </h1>
+      <p class="hero-sub">
+        Consultoría especializada en accesibilidad digital para equipos de producto y desarrollo en Latinoamérica.
+        Auditorías, implementación y acompañamiento técnico.
+      </p>
+      <div class="hero-actions">
+        <a href="/es/servicios/" class="btn btn-primary">Ver servicios</a>
+        <a href="/es/blog/" class="btn btn-ghost">Leer investigaciones</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEPARADOR -->
+  <div class="section-divider" aria-hidden="true"></div>
+
+  <!-- SERVICIOS RESUMIDOS -->
+  <section class="services-preview" aria-labelledby="services-heading">
+    <div class="container">
+      <h2 id="services-heading" class="section-label">Servicios</h2>
+      <ul class="services-grid" role="list">
+        <li class="service-card">
+          <p class="service-tag">01</p>
+          <h3>Auditoría de accesibilidad</h3>
+          <p class="muted">Evaluación técnica de sitios web y aplicaciones contra WCAG 2.1 / 2.2. Informe detallado con criterios, impacto y recomendaciones priorizadas.</p>
+        </li>
+        <li class="service-card">
+          <p class="service-tag">02</p>
+          <h3>Consultoría técnica</h3>
+          <p class="muted">Acompañamiento a equipos de desarrollo e integración de accesibilidad en el proceso de diseño y construcción de producto.</p>
+        </li>
+        <li class="service-card">
+          <p class="service-tag">03</p>
+          <h3>Revisión de componentes</h3>
+          <p class="muted">Análisis de sistemas de diseño, librerías de componentes y flujos críticos para garantizar accesibilidad desde la base.</p>
+        </li>
+      </ul>
+      <a href="/es/servicios/" class="link-more">Ver todos los servicios →</a>
+    </div>
+  </section>
+
+  <!-- SEPARADOR -->
+  <div class="section-divider" aria-hidden="true"></div>
+
+  <!-- INVESTIGACIÓN / BLOG PREVIEW -->
+  <section class="blog-preview" aria-labelledby="blog-heading">
+    <div class="container">
+      <div class="blog-header">
+        <h2 id="blog-heading" class="section-label">Investigación</h2>
+        <a href="/es/blog/" class="link-more">Ver todo →</a>
+      </div>
+      <p class="muted blog-sub">
+        Analizamos la accesibilidad de productos digitales en Latinoamérica: gobierno, banca, comercio, transporte.
+        País por país. Sin filtros.
+      </p>
+      <!-- Los posts se generarán dinámicamente cuando haya contenido en /content/blog -->
+      <div class="blog-placeholder" role="note">
+        <p class="muted">Las primeras investigaciones están en camino.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <Newsletter lang="es" />
+
+</Base>
+
+<style>
+  /* HERO */
+  .hero {
+    padding: var(--space-2xl) 0 var(--space-xl);
+  }
+
+  .hero-eyebrow {
+    font-size: 0.8125rem;
+    color: var(--color-purple-lt);
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-md);
+    font-style: italic;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    max-width: 18ch;
+    margin-bottom: var(--space-lg);
+  }
+
+  .accent-gradient {
+    background: linear-gradient(135deg, var(--color-purple-lt) 0%, var(--color-pink) 50%, var(--color-red-lt) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    max-width: 52ch;
+    color: var(--color-muted);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    display: inline-block;
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--color-pink);
+    outline-offset: 3px;
+  }
+
+  .btn-primary {
+    background: var(--color-purple);
+    color: #fff;
+    border: 1px solid var(--color-purple);
+  }
+
+  .btn-primary:hover {
+    background: #6d28d9;
+    border-color: #6d28d9;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-muted);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--color-purple-lt);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  /* SEPARADOR */
+  .section-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--space-xl) 0;
+  }
+
+  /* SECCIÓN LABEL */
+  .section-label {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    font-weight: 400;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* SERVICIOS */
+  .services-preview { padding: var(--space-lg) 0; }
+
+  .services-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+    margin-bottom: var(--space-lg);
+  }
+
+  .service-card {
+    background: var(--color-bg);
+    padding: var(--space-lg);
+    transition: background 0.15s;
+  }
+
+  .service-card:hover { background: var(--color-surface); }
+
+  .service-tag {
+    font-size: 0.75rem;
+    color: var(--color-purple-lt);
+    font-family: var(--font-mono);
+    margin-bottom: var(--space-md);
+  }
+
+  .service-card h3 {
+    font-size: 1.0625rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .service-card p {
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .link-more {
+    font-size: 0.875rem;
+    color: var(--color-purple-lt);
+  }
+
+  .link-more:hover { color: var(--color-pink-lt); }
+
+  /* BLOG */
+  .blog-preview { padding: var(--space-lg) 0; }
+
+  .blog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-sm);
+  }
+
+  .blog-sub {
+    max-width: 58ch;
+    font-size: 0.9375rem;
+    margin-bottom: var(--space-lg);
+  }
+
+  .blog-placeholder {
+    border: 1px dashed var(--color-border);
+    padding: var(--space-lg);
+    border-radius: 2px;
+  }
+
+  .blog-placeholder p { font-size: 0.875rem; }
+</style>
